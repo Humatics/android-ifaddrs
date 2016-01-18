@@ -143,11 +143,10 @@ static struct nlmsghdr *getNetlinkResponse(int p_socket, int *p_size, int *p_don
         }
         if(l_read >= 0)
         {
-            pid_t l_pid = getpid();
             struct nlmsghdr *l_hdr;
             for(l_hdr = (struct nlmsghdr *)l_buffer; NLMSG_OK(l_hdr, (unsigned int)l_read); l_hdr = (struct nlmsghdr *)NLMSG_NEXT(l_hdr, l_read))
             {
-                if((pid_t)l_hdr->nlmsg_pid != l_pid || (int)l_hdr->nlmsg_seq != p_socket)
+                if((int)l_hdr->nlmsg_seq != p_socket)
                 {
                     continue;
                 }
@@ -548,14 +547,13 @@ static int interpretAddr(struct nlmsghdr *p_hdr, struct ifaddrs **p_resultList, 
 static int interpretLinks(int p_socket, NetlinkList *p_netlinkList, struct ifaddrs **p_resultList)
 {
     int l_numLinks = 0;
-    pid_t l_pid = getpid();
     for(; p_netlinkList; p_netlinkList = p_netlinkList->m_next)
     {
         unsigned int l_nlsize = p_netlinkList->m_size;
         struct nlmsghdr *l_hdr;
         for(l_hdr = p_netlinkList->m_data; NLMSG_OK(l_hdr, l_nlsize); l_hdr = NLMSG_NEXT(l_hdr, l_nlsize))
         {
-            if((pid_t)l_hdr->nlmsg_pid != l_pid || (int)l_hdr->nlmsg_seq != p_socket)
+            if((int)l_hdr->nlmsg_seq != p_socket)
             {
                 continue;
             }
@@ -580,14 +578,13 @@ static int interpretLinks(int p_socket, NetlinkList *p_netlinkList, struct ifadd
 
 static int interpretAddrs(int p_socket, NetlinkList *p_netlinkList, struct ifaddrs **p_resultList, int p_numLinks)
 {
-    pid_t l_pid = getpid();
     for(; p_netlinkList; p_netlinkList = p_netlinkList->m_next)
     {
         unsigned int l_nlsize = p_netlinkList->m_size;
         struct nlmsghdr *l_hdr;
         for(l_hdr = p_netlinkList->m_data; NLMSG_OK(l_hdr, l_nlsize); l_hdr = NLMSG_NEXT(l_hdr, l_nlsize))
         {
-            if((pid_t)l_hdr->nlmsg_pid != l_pid || (int)l_hdr->nlmsg_seq != p_socket)
+            if((int)l_hdr->nlmsg_seq != p_socket)
             {
                 continue;
             }
